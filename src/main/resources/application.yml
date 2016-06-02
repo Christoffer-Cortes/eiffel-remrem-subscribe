@@ -1,0 +1,4 @@
+rabbitmq:
+  host: 192.168.0.103
+  exchange:
+    name: eiffel.poc

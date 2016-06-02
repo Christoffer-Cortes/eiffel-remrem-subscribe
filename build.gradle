@@ -1,0 +1,132 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.5.RELEASE")
+    }
+}
+
+plugins{
+    id 'java'
+    id 'war'
+    //id 'com.github.samueltbrown.cucumber' version '0.9'
+    id 'maven'
+    id 'jacoco'
+    id 'com.github.kt3k.coveralls' version '2.6.3'
+}
+
+apply plugin: 'war'
+
+war {
+    baseName = 'remrem-subscribe'
+    version =  '0.5.0'
+}
+
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true // coveralls plugin depends on xml format report
+        html.enabled = true
+        html.destination "${buildDir}/jacocoHtml"
+    }
+}
+
+configurations {
+    providedRuntime
+    provided
+
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
+}
+
+sourceSets {
+    integrationTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/integration-test/java')
+        }
+        resources.srcDir file('src/integration-test/resources')
+    }
+}
+
+install.dependsOn assemble
+
+apply plugin: 'spring-boot'
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.13'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+task integrationTest(type: Test) {
+    jacoco {
+        //destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+        destinationFile = file("$buildDir/jacoco/integrationTest.exec")
+        classDumpFile = file("$buildDir/classes/integrationTest")
+    }
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    outputs.upToDateWhen { false }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+ext {
+    sprintBootVersion = "1.3.5.RELEASE"
+    atmosphereVersion = '2.4.4'
+    jettyVersion = '9.2.13.v20150730'
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://jitpack.io" }
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web:$sprintBootVersion") {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
+    }
+    //ServletException requires compile time servlet dependency but it causes problems
+    //when deployed if exist on war run time.. hence provided but also compileOnly
+    compileOnly("org.springframework.boot:spring-boot-starter-tomcat")
+    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+
+    //gson support
+    compile('com.google.code.gson:gson:2.6.2')
+    compile 'com.rabbitmq:amqp-client:3.5.7'
+    compile 'org.projectlombok:lombok:1.16.8'
+
+    //swagger UI
+    compile 'io.springfox:springfox-swagger2:2.4.0'
+    compile 'io.springfox:springfox-swagger-ui:2.4.0'
+
+    // tag::actuator[]
+    compile("org.springframework.boot:spring-boot-starter-actuator:$sprintBootVersion")
+    // end::actuator[]
+
+
+    //compileOnly is supported in gradle 2.12 but it might be required
+    // in cucumber folder
+    compile "org.projectlombok:lombok:1.16.8"
+
+    testCompile 'junit:junit:4.12'
+
+    testCompile("org.springframework.boot:spring-boot-starter-test:$sprintBootVersion"){
+        exclude module: "spring-boot-starter-logging"
+        exclude module: "logback-classic"
+    }
+
+/*    //Cloud is enabled via dependency but disabled via config
+    compile('org.springframework.cloud:spring-cloud-starter-consul-all:1.0.0.RELEASE') {
+        exclude group: 'io.reactivex', module: 'rxjava'
+
+    }
+    compile group: 'io.reactivex', name: 'rxjava', version: '1.1.5'*/
+
+    // In order to get embedded app container to work
+    integrationTestCompile group: 'com.jayway.restassured', name: 'rest-assured', version: '2.9.0'
+}
