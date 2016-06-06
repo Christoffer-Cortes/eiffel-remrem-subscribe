@@ -31,8 +31,8 @@ public class EiffelEmitterIntegrationTest {
     }
 
     @Test public void testEiffelSubscriber() throws Exception {
-        String msg0 = "test-msg" + System.currentTimeMillis();
-        String msg1 = "test-msg" + System.currentTimeMillis();
+        String msg0 = "test-msg-1";
+        String msg1 = "test-msg-2";
         String routingKey = "333";
 
         sseHelper.receive(port, routingKey, 10000);
