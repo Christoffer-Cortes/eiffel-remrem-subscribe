@@ -30,6 +30,7 @@ jacocoTestReport {
         html.enabled = true
         html.destination "${buildDir}/jacocoHtml"
     }
+    executionData = files('build/jacoco/integrationTest.exec', 'build/jacoco/test.exec')
 }
 
 configurations {
@@ -129,4 +130,7 @@ dependencies {
 
     // In order to get embedded app container to work
     integrationTestCompile group: 'com.jayway.restassured', name: 'rest-assured', version: '2.9.0'
+    // client side api support of sse
+    integrationTestCompile group: 'org.glassfish.jersey.media', name: 'jersey-media-sse', version: '2.23'
+
 }

@@ -1,4 +1,4 @@
-# RemRem Publish
+# RemRem Subscribe
 
 RemRem Subscribe is a microservice allowing receiving of messages to a topic based exchange on a RabbitMQ Server.
 
