@@ -24,7 +24,7 @@ import java.util.List;
         EventSource eventSource = EventSource.target(target).build();
         EventListener listener = inboundEvent -> {
             String msg = inboundEvent.readData(String.class);
-            System.out.println("===" + inboundEvent.getName() + "; " + msg);
+            log.debug("===" + inboundEvent.getName() + "; " + msg);
             msgs.add(msg);
         };
         eventSource.register(listener);
