@@ -1,5 +1,6 @@
 package com.ericsson.eiffel.remrem.subscribe.message;
 
+import com.ericsson.eiffel.remrem.subscribe.util.ConnectionHelper;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -8,6 +9,7 @@ import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -20,11 +22,10 @@ import java.util.concurrent.TimeoutException;
 
 @Component("rabbitSender") @Slf4j
 public class RabbitSender implements Sender {
-    private static final int CHANNEL_COUNT = 1000;
-    private static final Random random = new Random();
     @Value("${rabbitmq.host}") private String host;
     @Value("${rabbitmq.exchange.name}") private String exchangeName;
     private Connection rabbitConnection;
+    @Autowired private ConnectionHelper connectionHelper;
 
     @PostConstruct public void init() {
         //log.info("RMQHelper init ...");
@@ -54,14 +55,16 @@ public class RabbitSender implements Sender {
             }
             @Override
             public void handleCancel(String consumerTag) throws IOException {
-                sseEmitter.completeWithError(new Exception("Consumer Cancelled on RabbitMQ end"));
+
+                connectionHelper.onQueueCancelled(sseEmitter, ch, queueName);
             }
         };
         ch.basicConsume(queueName, true, consumer);
+        connectionHelper.onQueueStarted(sseEmitter, ch, queueName);
     }
 
     @PreDestroy public void lastStep() throws IOException {
-        //log.info("RMQHelper init ...");
+        log.info("RMQHelper lastStep ...");
         rabbitConnection.close();
     }
 

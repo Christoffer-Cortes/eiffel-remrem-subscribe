@@ -2,3 +2,6 @@ rabbitmq:
   host: 127.0.0.1
   exchange:
     name: eiffel.test
+
+logging:
+  level.com.ericsson.eiffel.remrem: DEBUG
