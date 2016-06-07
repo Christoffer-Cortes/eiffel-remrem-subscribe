@@ -18,7 +18,7 @@ import java.util.concurrent.TimeoutException;
     }
 
     public void onQueueStarted(SseEmitter sseEmitter, Channel ch, String queueName) {
-        log.debug("onQueueStarted");
+        log.debug("onQueueStarted: " + ch.getChannelNumber() + " and queue: " + queueName);
         map.put(sseEmitter, new ChannelInfo(ch, queueName));
     }
 

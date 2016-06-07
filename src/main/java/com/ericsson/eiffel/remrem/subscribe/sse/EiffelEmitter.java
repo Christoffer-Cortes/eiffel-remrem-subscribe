@@ -20,7 +20,8 @@ import java.io.IOException;
     public SseEmitter eiffelSubscriber(@RequestParam("bindingKey") String bindingKey)
         throws IOException {
         System.out.println(bindingKey);
-        SseEmitter emitter = new SseEmitter(1000000L);
+        // TODO investigate what timeout means exactly
+        SseEmitter emitter = new SseEmitter(100000000L);
         connectionHelper.onEmitterStarted(emitter);
         System.out.println("Timeout is" + emitter.getTimeout());
         emitter.onCompletion(() -> {
