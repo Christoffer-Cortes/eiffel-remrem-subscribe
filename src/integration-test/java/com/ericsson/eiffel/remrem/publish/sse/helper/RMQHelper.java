@@ -27,15 +27,15 @@ import javax.annotation.PreDestroy;
         throws IOException, InterruptedException, TimeoutException {
 
         ConnectionFactory factory = new ConnectionFactory();
-        System.out.println("host" + host);
+        log.debug("host" + host);
         factory.setHost(host);
         Connection rabbitConnection = factory.newConnection();
 
         Channel channel = rabbitConnection.createChannel();
-        System.out.println("host" + host);
-        System.out.println("exchangeName" + exchangeName);
-        System.out.println("routingKey" + routingKey);
-        System.out.println("msg" + msg);
+        log.debug("host" + host);
+        log.debug("exchangeName" + exchangeName);
+        log.debug("routingKey" + routingKey);
+        log.debug("msg" + msg);
         channel.basicPublish(exchangeName, routingKey, MessageProperties.BASIC, msg.getBytes());
         Thread.sleep(TimeUnit.SECONDS.toMillis(1));
         channel.close();

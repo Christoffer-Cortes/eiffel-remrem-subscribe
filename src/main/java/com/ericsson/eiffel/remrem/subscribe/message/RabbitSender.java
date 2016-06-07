@@ -44,13 +44,13 @@ public class RabbitSender implements Sender {
         Channel ch = rabbitConnection.createChannel();
         String queueName = ch.queueDeclare().getQueue();
         ch.queueBind(queueName, exchangeName, bindingKey);
-        System.out.println("Binding key:" + bindingKey);
+        log.debug("Binding key:" + bindingKey);
         Consumer consumer = new DefaultConsumer(ch) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body)
                 throws IOException {
                 String message = new String(body, "UTF-8");
-                System.out.println(" [x] Received '" + message + "'");
+                log.debug(" [x] Received '" + message + "'");
                 sseEmitter.send(message);
             }
             @Override
