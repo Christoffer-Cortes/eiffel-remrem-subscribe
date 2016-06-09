@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/Ericsson/eiffel-remrem-subscribe.svg?branch=master)](https://travis-ci.org/Ericsson/eiffel-remrem-subscribe)
 [![Coverage Status](https://coveralls.io/repos/github/Ericsson/eiffel-remrem-subscribe/badge.svg?branch=master)](https://coveralls.io/github/Ericsson/eiffel-remrem-subscribe?branch=master)
+[![](https://jitpack.io/v/Ericsson/eiffel-remrem-subscribe.svg)](https://jitpack.io/#Ericsson/eiffel-remrem-subscribe)
 
 RemRem Subscribe is a microservice allowing receiving of messages to a topic based exchange on a RabbitMQ Server.
 
