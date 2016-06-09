@@ -9,6 +9,9 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
 @RunWith(MockitoJUnitRunner.class) public class ConnectionHelperTest {
 
     private ConnectionHelper unitUnderTest;
@@ -16,15 +19,14 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
     @Mock private Channel mockChannel;
     private static final String QUEUE_NAME = "some-queue";
 
-    @Before public void setup() {
+    @Before public void setup() throws IOException, TimeoutException {
         unitUnderTest = new ConnectionHelper();
         Mockito.doNothing().when(mockEmitter).completeWithError(Mockito.any(Throwable.class));
         Mockito.when(mockChannel.isOpen()).thenReturn(false);
+        Mockito.doNothing().when(mockChannel).close();
     }
 
     @Test public void testOnQueueCancelled() throws Exception {
-        Mockito.doNothing().when(mockChannel).close();
-
         unitUnderTest.onQueueCancelled(mockEmitter, mockChannel, QUEUE_NAME);
 
         Mockito.verify(mockEmitter, Mockito.times(1))
