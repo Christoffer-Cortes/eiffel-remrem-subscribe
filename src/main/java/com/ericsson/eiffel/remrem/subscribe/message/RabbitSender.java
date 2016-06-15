@@ -1,6 +1,7 @@
 package com.ericsson.eiffel.remrem.subscribe.message;
 
 import com.ericsson.eiffel.remrem.subscribe.util.ConnectionHelper;
+import com.ericsson.eiffel.remrem.subscribe.util.ContentHelper;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -26,9 +27,10 @@ public class RabbitSender implements Sender {
     @Value("${rabbitmq.exchange.name}") private String exchangeName;
     private Connection rabbitConnection;
     @Autowired private ConnectionHelper connectionHelper;
+    @Autowired private ContentHelper contentHelper;
 
     @PostConstruct public void init() {
-        //log.info("RMQHelper init ...");
+        log.info("RabbitSender init ...");
         try {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setHost(host);
@@ -51,7 +53,7 @@ public class RabbitSender implements Sender {
                 throws IOException {
                 String message = new String(body, "UTF-8");
                 log.debug(" [x] Received '" + message + "'");
-                sseEmitter.send(message);
+                sseEmitter.send(contentHelper.getContent(message));
             }
             @Override
             public void handleCancel(String consumerTag) throws IOException {
