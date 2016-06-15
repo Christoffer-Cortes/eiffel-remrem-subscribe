@@ -16,9 +16,9 @@ import org.springframework.util.StringUtils;
      *     remove the line breaks in the given content
      * </p>
      * @param content the original content
-     * @return the content where line breaks are replaced by a blank space
+     * @return the content where line breaks are removed
      */
     public String getContent(String content) {
-        return StringUtils.replace(StringUtils.replace(content, "\r", " "), "\n", " ");
+        return StringUtils.replace(StringUtils.replace(content, "\r", ""), "\n", "");
     }
 }
